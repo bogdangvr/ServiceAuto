@@ -4,7 +4,10 @@ import Angajati.Angajat;
 import Angajati.Asistent;
 import Angajati.Director;
 import Angajati.Mecanic;
+import Masini.Autobuz;
+import Masini.Camion;
 import Masini.Masina;
+import Masini.Standard;
 
 import java.util.*;
 
@@ -537,5 +540,194 @@ public class Serviciu {
         }
     }
 
+    public void trecereaTimpului(List<Angajat> listaAngajati, List<Masina> listaMasini, Queue<Masina> coadaMasini){
+        // vom lua prima masina din coada de reparare al fiecarui angajat si ii reducem timpul cu o unitate
+        // daca ajunge la 0, o eliminam din coada fiecarui angajat si daca exista masini in coada de asteptare, o
+        // vom lua pe prima si o atribuim angajatului curent
+        for (int i=0; i<listaAngajati.size(); i++){
+            Angajat angajatCurent = listaAngajati.get(i);
+            // daca angajatul curent are masini in coada de reparare
+            if (!angajatCurent.getCoadaMasini().isEmpty()){
+                int idMasinaCurenta = angajatCurent.getCoadaMasini().peek();
+                Masina masinaCurenta;
+                for (int j=0; j<=listaMasini.size(); j++){
+                    if (listaMasini.get(j).getId()==idMasinaCurenta){
+                        masinaCurenta = listaMasini.get(j);
+                        // daca mai are o singura unitate ramasa, o eliminam din coada si actualizam statusurile angajatului
+                        if (masinaCurenta.getTimpReparatie() == 1){
+                            masinaCurenta.setTimpReparatie(0);
+                            angajatCurent.getCoadaMasini().poll();
+                            if (masinaCurenta instanceof Standard){
+                                angajatCurent.setNrStandardInCoada(angajatCurent.getNrStandardInCoada()-1);
+                            }
+                            if (masinaCurenta instanceof Autobuz){
+                                angajatCurent.setNrAutobuzeInCoada(0);
+                            }
+                            if (masinaCurenta instanceof Camion){
+                                angajatCurent.setNrCamioaneInCoada(0);
+                            }
+                            angajatCurent.setSumaPolite(angajatCurent.getSumaPolite()+masinaCurenta.polita());
+                            Calendar ziCurenta = new GregorianCalendar();
+                            if (masinaCurenta instanceof Autobuz && ziCurenta.get(Calendar.YEAR) - masinaCurenta.getAnFabricatie()<=5){
+                                angajatCurent.setNrAutobuzeNoi(angajatCurent.getNrAutobuzeNoi()+1);
+                            }
+                            angajatCurent.setBacsis(angajatCurent.getBacsis() + (masinaCurenta.politaDiscout()/100));
+                            //verificam daca exista masini in coada de asteptare
+                            if (!coadaMasini.isEmpty()){
+                                if (coadaMasini.peek() instanceof Standard){
+                                    if (angajatCurent.getNrStandardInCoada()<3){
+                                        angajatCurent.setNrStandardInCoada(angajatCurent.getNrStandardInCoada()+1);
+                                        angajatCurent.getCoadaMasini().add(coadaMasini.peek().getId());
+                                        coadaMasini.poll().setStatus(-1);
+                                    }
+                                }
+                                if (coadaMasini.peek() instanceof Autobuz){
+                                    if (angajatCurent.getNrAutobuzeInCoada()==0){
+                                        angajatCurent.setNrAutobuzeInCoada(1);
+                                        angajatCurent.getCoadaMasini().add(coadaMasini.peek().getId());
+                                        coadaMasini.poll().setStatus(-1);
+                                    }
+                                }
+                                if (coadaMasini.peek() instanceof Camion){
+                                    if (angajatCurent.getNrCamioaneInCoada()==0){
+                                        angajatCurent.setNrCamioaneInCoada(1);
+                                        angajatCurent.getCoadaMasini().add(coadaMasini.peek().getId());
+                                        coadaMasini.poll().setStatus(-1);
+                                    }
+                                }
+                            }
+                        }
+                        else{
+                            masinaCurenta.setTimpReparatie(masinaCurenta.getTimpReparatie()-1);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    public void afisareIncarcaturaMaxima(List<Angajat> listaAngajati){
+        Angajat raspuns = null;
+        int maxim = -1;
+        int incarcaturaCurenta;
+        for (int i=0; i<listaAngajati.size(); i++){
+            incarcaturaCurenta = listaAngajati.get(i).getNrStandardInCoada() +
+                                     listaAngajati.get(i).getNrAutobuzeInCoada() +
+                                     listaAngajati.get(i).getNrCamioaneInCoada();
+            if (incarcaturaCurenta>maxim){
+                maxim = incarcaturaCurenta;
+                raspuns = listaAngajati.get(i);
+            }
+        }
+        System.out.println(raspuns);
+    }
+
+    public void top3politeTotale(List<Angajat> listaAngajati){
+        //maxim1 cea mai mare valoare, maxim2 a doua, maxim3 a treia
+        int maxim1 = -1;
+        Angajat angajat1 = null;
+        int maxim2 = -1;
+        Angajat angajat2 = null;
+        int maxim3 = -1;
+        Angajat angajat3 = null;
+        int suma;
+        for (int i=0; i<listaAngajati.size();i++){
+            suma = listaAngajati.get(i).getSumaPolite();
+            if (suma > maxim1){
+                maxim3 = maxim2;
+                angajat3 = angajat2;
+                maxim2 = maxim1;
+                angajat2 = angajat1;
+                maxim1 = suma;
+                angajat1 = listaAngajati.get(i);
+            }
+            else{
+                if (suma > maxim2){
+                    maxim3 = maxim2;
+                    angajat3 = angajat2;
+                    maxim2 = suma;
+                    angajat2 = listaAngajati.get(i);
+                }
+                else{
+                    if (suma > maxim3){
+                        maxim3 = suma;
+                        angajat3 = listaAngajati.get(i);
+                    }
+                }
+            }
+        }
+        System.out.println("Top 3 angajati sunt:");
+        System.out.println("1." + angajat1);
+        System.out.println("2." + angajat2);
+        System.out.println("3." + angajat3);
+    }
+
+    public void top3autobuzeNoi(List<Angajat> listaAngajati){
+        //maxim1 cea mai mare valoare, maxim2 a doua, maxim3 a treia
+        int maxim1 = -1;
+        Angajat angajat1 = null;
+        int maxim2 = -1;
+        Angajat angajat2 = null;
+        int maxim3 = -1;
+        Angajat angajat3 = null;
+        int nrAutobuze;
+        for (int i=0; i<listaAngajati.size();i++){
+            nrAutobuze = listaAngajati.get(i).getNrAutobuzeNoi();
+            if (nrAutobuze > maxim1){
+                maxim3 = maxim2;
+                angajat3 = angajat2;
+                maxim2 = maxim1;
+                angajat2 = angajat1;
+                maxim1 = nrAutobuze;
+                angajat1 = listaAngajati.get(i);
+            }
+            else{
+                if (nrAutobuze > maxim2){
+                    maxim3 = maxim2;
+                    angajat3 = angajat2;
+                    maxim2 = nrAutobuze;
+                    angajat2 = listaAngajati.get(i);
+                }
+                else{
+                    if (nrAutobuze > maxim3){
+                        maxim3 = nrAutobuze;
+                        angajat3 = listaAngajati.get(i);
+                    }
+                }
+            }
+        }
+        System.out.println("Top 3 angajati sunt:");
+        System.out.println("1." + angajat1);
+        System.out.println("2." + angajat2);
+        System.out.println("3." + angajat3);
+    }
+
+    public void topSolicitati(List<Angajat> listaAngajati){
+        List<Angajat> raspuns = new ArrayList<>();
+
+        int maxim = -1;
+        for (int i=0; i<listaAngajati.size(); i++){
+            if (maxim<listaAngajati.get(i).getSolicitareSpeciala()){
+                maxim=listaAngajati.get(i).getSolicitareSpeciala();
+            }
+        }
+        for (int i=0; i<listaAngajati.size(); i++){
+            if (maxim==listaAngajati.get(i).getSolicitareSpeciala()){
+                raspuns.add(listaAngajati.get(i));
+            }
+        }
+        System.out.println("Cei mai cautati angajati sunt:");
+        for (int i=0; i<raspuns.size(); i++){
+            System.out.println(raspuns);
+        }
+    }
+
+    public void afisareBacsis(List<Angajat> listaAngajati){
+        System.out.println("Bacsisurile angajatilor sunt:");
+        for (int i=0; i<listaAngajati.size();i++){
+            System.out.println("Pentru angajatul cu id-ul " + listaAngajati.get(i).getId() + ":" + listaAngajati.get(i).getBacsis());
+        }
+    }
 
 }

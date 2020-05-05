@@ -78,13 +78,16 @@ public class ScriitorAngajati {
             fw.append(",");
             fw.append(String.valueOf(angajatCurent.getBacsis()));
             fw.append(",");
+            fw.append(String.valueOf(angajatCurent.getSolicitareSpeciala()));
+            fw.append(",");
 
             fw.append(String.valueOf(angajatCurent.getCoadaMasini().size()));
             if (angajatCurent.getCoadaMasini().size()!=0) {
                 fw.append(",");
-                for (int j = 0; j < angajatCurent.getCoadaMasini().size(); j++) {
-                    fw.append(String.valueOf(angajatCurent.getCoadaMasini().size()));
-                    if (j!=angajatCurent.getCoadaMasini().size()-1){
+                int dim = angajatCurent.getCoadaMasini().size();
+                for (int j = 0; j < dim; j++) {
+                    fw.append(String.valueOf( angajatCurent.getCoadaMasini().poll() ) );
+                    if (j!=dim-1){
                         fw.append(",");
                     }
                 }

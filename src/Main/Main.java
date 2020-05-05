@@ -21,6 +21,7 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
 
+
         Serviciu serviciulMeu = new Serviciu();
 
         Cititor cititor = Cititor.getInstance();
@@ -125,6 +126,7 @@ public class Main {
             int autobuzeNoi = Integer.parseInt(continutFisierAngajati[i][9]);
             int sumapolite = Integer.parseInt(continutFisierAngajati[i][10]);
             int bacsis = Integer.parseInt(continutFisierAngajati[i][11]);
+            int solicitariSpeciale = Integer.parseInt(continutFisierAngajati[i][12]);
 
             if (tipAngajat == 1){
                 Director director = new Director(nume,prenume,dataNasterii,dataAngajarii);
@@ -135,11 +137,12 @@ public class Main {
                 director.setNrAutobuzeNoi(autobuzeNoi);
                 director.setSumaPolite(sumapolite);
                 director.setBacsis(bacsis);
+                director.setSolicitareSpeciala(solicitariSpeciale);
                 listaAngajati.add(director);
-                int nrMasiniInCoada = Integer.parseInt(continutFisierAngajati[i][12]);
+                int nrMasiniInCoada = Integer.parseInt(continutFisierAngajati[i][13]);
                 if (nrMasiniInCoada!=0){
                     for (int j=0; j<nrMasiniInCoada; j++){
-                        director.getCoadaMasini().add(Integer.parseInt(continutFisierAngajati[i][12+j+1]));
+                        director.getCoadaMasini().add(Integer.parseInt(continutFisierAngajati[i][13+j+1]));
                     }
                 }
             }
@@ -152,11 +155,12 @@ public class Main {
                 mecanic.setNrAutobuzeNoi(autobuzeNoi);
                 mecanic.setSumaPolite(sumapolite);
                 mecanic.setBacsis(bacsis);
+                mecanic.setSolicitareSpeciala(solicitariSpeciale);
                 listaAngajati.add(mecanic);
-                int nrMasiniInCoada = Integer.parseInt(continutFisierAngajati[i][12]);
+                int nrMasiniInCoada = Integer.parseInt(continutFisierAngajati[i][13]);
                 if (nrMasiniInCoada!=0){
                     for (int j=0; j<nrMasiniInCoada; j++){
-                        mecanic.getCoadaMasini().add(Integer.parseInt(continutFisierAngajati[i][12+j+1]));
+                        mecanic.getCoadaMasini().add(Integer.parseInt(continutFisierAngajati[i][13+j+1]));
                     }
                 }
             }
@@ -169,11 +173,12 @@ public class Main {
                 asistent.setNrAutobuzeNoi(autobuzeNoi);
                 asistent.setSumaPolite(sumapolite);
                 asistent.setBacsis(bacsis);
+                asistent.setSolicitareSpeciala(solicitariSpeciale);
                 listaAngajati.add(asistent);
-                int nrMasiniInCoada = Integer.parseInt(continutFisierAngajati[i][12]);
+                int nrMasiniInCoada = Integer.parseInt(continutFisierAngajati[i][13]);
                 if (nrMasiniInCoada!=0){
                     for (int j=0; j<nrMasiniInCoada; j++){
-                        asistent.getCoadaMasini().add(Integer.parseInt(continutFisierAngajati[i][12+j+1]));
+                        asistent.getCoadaMasini().add(Integer.parseInt(continutFisierAngajati[i][13+j+1]));
                     }
                 }
             }
@@ -203,9 +208,15 @@ public class Main {
                     System.out.println("3. Stergere angajat;");
                     System.out.println("4. Editare angajat;");
                     System.out.println("5. Calculare salariu angajat;");
-                    System.out.println("6. Exit.");
+                    System.out.println("6. Trecerea timpului (o unitate);");
+                    System.out.println("7. Afisare angajat cu cea mai mare incarcatura curenta;");
+                    System.out.println("8. Top 3 angajati cu suma politelor maxime;");
+                    System.out.println("9. Top 3 angajati ca numar de autobuze noi reparate;");
+                    System.out.println("10. Cei mai solicitati angajati;");
+                    System.out.println("11. Bacsisul fiecarui angajat;");
+                    System.out.println("12. Exit.");
                     int tasta = scanner.nextInt();
-                    while (tasta<1 || tasta >6){
+                    while (tasta<1 || tasta >12){
                         System.out.println("Nu ati ales o optiune valida!");
                         System.out.println("Alegeti o tasta:");
                         System.out.println("1. Afisare angajati;");
@@ -213,7 +224,13 @@ public class Main {
                         System.out.println("3. Stergere angajat;");
                         System.out.println("4. Editare angajat;");
                         System.out.println("5. Calculare salariu angajat;");
-                        System.out.println("6. Exit.");
+                        System.out.println("6. Trecerea timpului (o unitate);");
+                        System.out.println("7. Afisare angajat cu cea mai mare incarcatura curenta;");
+                        System.out.println("8. Top 3 angajati cu suma politelor maxime;");
+                        System.out.println("9. Top 3 angajati ca numar de autobuze noi reparate;");
+                        System.out.println("10. Cei mai solicitati angajati;");
+                        System.out.println("11. Bacsisul fiecarui angajat;");
+                        System.out.println("12. Exit.");
                         tasta = scanner.nextInt();
                     }
                     if (tasta == 1){
@@ -271,6 +288,31 @@ public class Main {
                         break;
                     }
                     if (tasta == 6){
+                        serviciulMeu.trecereaTimpului(listaAngajati, listaMasini, coadaMasini);
+                        break;
+                    }
+                    if (tasta == 7){
+                        serviciulMeu.afisareIncarcaturaMaxima(listaAngajati);
+                        break;
+                    }
+                    if (tasta == 8){
+                        serviciulMeu.top3politeTotale(listaAngajati);
+                        break;
+                    }
+                    if (tasta == 9){
+                        serviciulMeu.top3autobuzeNoi(listaAngajati);
+                        break;
+                    }
+                    if (tasta == 10){
+                        serviciulMeu.topSolicitati(listaAngajati);
+                        break;
+                    }
+                    if (tasta == 11){
+                        serviciulMeu.afisareBacsis(listaAngajati);
+                        break;
+                    }
+                    if (tasta == 12){
+                        serviciulMeu.afisareBacsis(listaAngajati);
                         break;
                     }
                 }
@@ -334,7 +376,7 @@ public class Main {
                     listaMasini.add(standard);
 
                     //generam random timpul reparatiei
-                    int timp = (int)(Math.random() * 10);
+                    int timp = (int)( (Math.random()+1) * 10);
                     standard.setTimpReparatie(timp);
 
                     int polita = 0;
@@ -358,6 +400,10 @@ public class Main {
                     }
                     Autobuz autobuz = new Autobuz(nrkm,anFabricatie,diesel,nrLocuri);
                     listaMasini.add(autobuz);
+                    //generam random timpul reparatiei
+                    int timp = (int)((Math.random() + 1) * 10);
+                    autobuz.setTimpReparatie(timp);
+
                     int polita = 0;
                     if (discount == 1){
                         polita = autobuz.politaDiscout();
@@ -380,6 +426,11 @@ public class Main {
                     Camion camion = new Camion(nrkm,anFabricatie,diesel,tonaj);
                     listaMasini.add(camion);
                     int polita = 0;
+
+                    //generam random timpul reparatiei
+                    int timp = (int)((Math.random() + 1) * 10);
+                    camion.setTimpReparatie(timp);
+
                     if (discount == 1){
                         polita = camion.politaDiscout();
                     }
