@@ -4,11 +4,9 @@ import Angajati.Angajat;
 import Angajati.Asistent;
 import Angajati.Director;
 import Angajati.Mecanic;
+import Masini.Masina;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Serviciu {
 
@@ -130,36 +128,12 @@ public class Serviciu {
         }
     }
 
-    public void stergereAngajat(List<Angajat> listaAngajati, int id){
-        int indiceAngajatDeSters = -1;
-        for (int i=0; i<listaAngajati.size(); i++){
-            if (listaAngajati.get(i).getId()==id){
-                indiceAngajatDeSters=i;
-                break;
-            }
-        }
+    public void stergereAngajat(List<Angajat> listaAngajati, int indiceAngajatDeSters){
         listaAngajati.remove(indiceAngajatDeSters);
     }
 
-    public void afisareSalariu(List<Angajat> listaAngajati, int id){
-        Calendar ziCurenta = new GregorianCalendar();
-        for (int i=0; i<listaAngajati.size(); i++){
-            if (listaAngajati.get(i).getId()==id){
-                double coeficientSalariu = listaAngajati.get(i).getCoeficientSalariat();
-                if (ziCurenta.get(Calendar.MONTH)<listaAngajati.get(i).getDataAngajarii().get(Calendar.MONTH)){
-                    double salariu = (ziCurenta.get(Calendar.YEAR) - listaAngajati.get(i).getDataAngajarii().get(Calendar.YEAR) - 1)
-                                      * coeficientSalariu * 1000;
-                    System.out.println("Salariul angajatului cu id-ul " + id + " este: " + salariu);
-                }
-                else {
-                    double salariu = (ziCurenta.get(Calendar.YEAR) - listaAngajati.get(i).getDataAngajarii().get(Calendar.YEAR))
-                                      * coeficientSalariu * 1000;
-                    System.out.println("Salariul angajatului cu id-ul " + id + " este: " + salariu);
-                }
-                break;
-            }
-        }
-
+    public void afisareSalariu(List<Angajat> listaAngajati, int indice){
+        System.out.println("Salariul angajatului cu id-ul " + listaAngajati.get(indice).getId() + " este: " + listaAngajati.get(indice).calculSalariu());
     }
 
     public void editareAngajat(List<Angajat> listaAngajati){
@@ -178,6 +152,17 @@ public class Serviciu {
                 break;
             }
         }
+        while (indiceAngajatDeEditat == -1){
+            System.out.println("Id-ul introdus nu corespunde niciunui angajat. Introduceti alt id:");
+            id = scanner.nextInt();
+            for (int i=0; i<listaAngajati.size(); i++){
+                if (listaAngajati.get(i).getId()==id){
+                    indiceAngajatDeEditat=i;
+                    break;
+                }
+            }
+        }
+
         Angajat angajatDeEditat = listaAngajati.get(indiceAngajatDeEditat);
 
         System.out.println("Introduceti ce camp doriti sa editati:\n");
@@ -299,4 +284,258 @@ public class Serviciu {
             return;
         }
     }
+
+    public void programareStandard(List<Angajat> listaAngajati, Queue<Masina> coadaMasini, Masina masina, Scanner scanner){
+
+        // acum clientul va alege daca vrea un anumit angajat sa il ajute
+        System.out.println("Introduceti 1 pentru a fi distribuit la primul angajat liber sau 2 pentru a introduce id-ul unui anumit angajat: ");
+        int alegereAngajat = scanner.nextInt();
+        while (alegereAngajat!=1 && alegereAngajat!=2){
+            System.out.println("Trebuie sa introduceti 1 pentru a fi distribuit la primul angajat liber sau 2 pentru a introduce id-ul unui anumit angajat: ");
+            alegereAngajat = scanner.nextInt();
+        }
+        // il vom atribui primului angajat care nu este aglomerat
+        if (alegereAngajat==1){
+            // initializam un indice negativ si il updatam cand gasim un angajat care poate lua masina curenta
+            int indice=-1;
+            for (int i=0; i<listaAngajati.size(); i++){
+                if (listaAngajati.get(i).getNrStandardInCoada()<3){
+                    indice=i;
+                    listaAngajati.get(indice).getCoadaMasini().add(masina.getId());
+                    listaAngajati.get(indice).setNrStandardInCoada(listaAngajati.get(indice).getNrStandardInCoada()+1);
+                    break;
+                }
+            }
+        }
+        // altfel, va trebui sa introduca id-ul angajatului
+        else{
+            System.out.println("Introduceti id-ul angajatului care doriti sa va ajute: ");
+            int id = scanner.nextInt();
+            int indice = -1;
+            for (int i=0; i<listaAngajati.size(); i++){
+                if (id == listaAngajati.get(i).getId()){
+                    indice = i;
+                }
+            }
+            while (indice==-1){
+                System.out.println("Id-ul introdus nu corespunde niciunui angajat. Introduceti alt id: ");
+                id = scanner.nextInt();
+                for (int i=0; i<listaAngajati.size(); i++){
+                    if (id == listaAngajati.get(i).getId()){
+                        indice = i;
+                        // incrementam numarul de solicitari al acestui angajat
+                        listaAngajati.get(indice).setSolicitareSpeciala(listaAngajati.get(indice).getSolicitareSpeciala()+1);
+                    }
+                }
+            }
+            // daca poate fi atribuit angajatului dorit
+            if (listaAngajati.get(indice).getNrStandardInCoada() < 3){
+                listaAngajati.get(indice).getCoadaMasini().add(masina.getId());
+                listaAngajati.get(indice).setNrStandardInCoada(listaAngajati.get(indice).getNrStandardInCoada()+1);
+            }
+            // altfel il intrebam daca doreste sa fie repartizat altui angajat sau sa plece
+            else{
+                System.out.println("Angajatul selectat este prea ocupat. Alegeti 1 pentru redistribuire la alt angajat sau 2 pentru a pleca: ");
+                int optiune = scanner.nextInt();
+                while (optiune!=1 && optiune!=2){
+                    System.out.println("Alegere incorecta. Alegeti 1 pentru redistribuire la alt angajat sau 2 pentru a pleca: ");
+                    optiune = scanner.nextInt();
+                }
+                if (optiune == 1){
+                    int idx = -1;
+                    for (int i=0; i<listaAngajati.size(); i++){
+                        if (listaAngajati.get(i).getNrStandardInCoada()<3){
+                            listaAngajati.get(i).getCoadaMasini().add(masina.getId());
+                            listaAngajati.get(i).setNrStandardInCoada(listaAngajati.get(indice).getNrStandardInCoada()+1);
+                            idx = i;
+                            break;
+                        }
+                    }
+                    if (idx == -1){
+                        System.out.println("Toti angajatii sunt ocupati. Doriti sa ramaneti in coada de asteptare? 1 pentru Da, 2 pentru Nu.");
+                        System.out.println("Coada de asteptare are acum masinile: " + coadaMasini);
+                        int raspuns = scanner.nextInt();
+                        while (raspuns!=1 && raspuns!=2){
+                            System.out.println("Alegere incorecta. Alegeti 1 pentru a fi adaugat in coada sau 2 pentru a pleca: ");
+                            raspuns = scanner.nextInt();
+                        }
+                        // il adaugam in coada de asteptare
+                        if (raspuns == 1){
+                            coadaMasini.add(masina);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public void programareAutobuz(List<Angajat> listaAngajati, Queue<Masina> coadaMasini, Masina masina, Scanner scanner){
+
+        // acum clientul va alege daca vrea un anumit angajat sa il ajute
+        System.out.println("Introduceti 1 pentru a fi distribuit la primul angajat liber sau 2 pentru a introduce id-ul unui anumit angajat: ");
+        int alegereAngajat = scanner.nextInt();
+        while (alegereAngajat!=1 && alegereAngajat!=2){
+            System.out.println("Trebuie sa introduceti 1 pentru a fi distribuit la primul angajat liber sau 2 pentru a introduce id-ul unui anumit angajat: ");
+            alegereAngajat = scanner.nextInt();
+        }
+        // il vom atribui primului angajat care nu este aglomerat
+        if (alegereAngajat==1){
+            // initializam un indice negativ si il updatam cand gasim un angajat care poate lua masina curenta
+            int indice=-1;
+            for (int i=0; i<listaAngajati.size(); i++){
+                if (listaAngajati.get(i).getNrAutobuzeInCoada()==0){
+                    indice=i;
+                    listaAngajati.get(indice).getCoadaMasini().add(masina.getId());
+                    listaAngajati.get(indice).setNrAutobuzeInCoada(1);
+                    break;
+                }
+            }
+        }
+        // altfel, va trebui sa introduca id-ul angajatului
+        else{
+            System.out.println("Introduceti id-ul angajatului care doriti sa va ajute: ");
+            int id = scanner.nextInt();
+            int indice = -1;
+            for (int i=0; i<listaAngajati.size(); i++){
+                if (id == listaAngajati.get(i).getId()){
+                    indice = i;
+                }
+            }
+            while (indice==-1){
+                System.out.println("Id-ul introdus nu corespunde niciunui angajat. Introduceti alt id: ");
+                id = scanner.nextInt();
+                for (int i=0; i<listaAngajati.size(); i++){
+                    if (id == listaAngajati.get(i).getId()){
+                        indice = i;
+                        // incrementam numarul de solicitari al acestui angajat
+                        listaAngajati.get(indice).setSolicitareSpeciala(listaAngajati.get(indice).getSolicitareSpeciala()+1);
+                    }
+                }
+            }
+            // daca poate fi atribuit angajatului dorit
+            if (listaAngajati.get(indice).getNrAutobuzeInCoada() == 0){
+                listaAngajati.get(indice).getCoadaMasini().add(masina.getId());
+                listaAngajati.get(indice).setNrAutobuzeInCoada(1);
+            }
+            // altfel il intrebam daca doreste sa fie repartizat altui angajat sau sa plece
+            else{
+                System.out.println("Angajatul selectat este prea ocupat. Alegeti 1 pentru redistribuire la alt angajat sau 2 pentru a pleca: ");
+                int optiune = scanner.nextInt();
+                while (optiune!=1 && optiune!=2){
+                    System.out.println("Alegere incorecta. Alegeti 1 pentru redistribuire la alt angajat sau 2 pentru a pleca: ");
+                    optiune = scanner.nextInt();
+                }
+                if (optiune == 1){
+                    int idx = -1;
+                    for (int i=0; i<listaAngajati.size(); i++){
+                        if (listaAngajati.get(i).getNrAutobuzeInCoada() == 0){
+                            listaAngajati.get(i).getCoadaMasini().add(masina.getId());
+                            listaAngajati.get(i).setNrAutobuzeInCoada(1);
+                            idx = i;
+                            break;
+                        }
+                    }
+                    if (idx == -1){
+                        System.out.println("Toti angajatii sunt ocupati. Doriti sa ramaneti in coada de asteptare? 1 pentru Da, 2 pentru Nu.");
+                        System.out.println("Coada de asteptare are acum masinile: " + coadaMasini);
+                        int raspuns = scanner.nextInt();
+                        while (raspuns!=1 && raspuns!=2){
+                            System.out.println("Alegere incorecta. Alegeti 1 pentru a fi adaugat in coada sau 2 pentru a pleca: ");
+                            raspuns = scanner.nextInt();
+                        }
+                        // il adaugam in coada de asteptare
+                        if (raspuns == 1){
+                            coadaMasini.add(masina);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public void programareCamion(List<Angajat> listaAngajati, Queue<Masina> coadaMasini, Masina masina, Scanner scanner){
+
+        // acum clientul va alege daca vrea un anumit angajat sa il ajute
+        System.out.println("Introduceti 1 pentru a fi distribuit la primul angajat liber sau 2 pentru a introduce id-ul unui anumit angajat: ");
+        int alegereAngajat = scanner.nextInt();
+        while (alegereAngajat!=1 && alegereAngajat!=2){
+            System.out.println("Trebuie sa introduceti 1 pentru a fi distribuit la primul angajat liber sau 2 pentru a introduce id-ul unui anumit angajat: ");
+            alegereAngajat = scanner.nextInt();
+        }
+        // il vom atribui primului angajat care nu este aglomerat
+        if (alegereAngajat==1){
+            // initializam un indice negativ si il updatam cand gasim un angajat care poate lua masina curenta
+            int indice=-1;
+            for (int i=0; i<listaAngajati.size(); i++){
+                if (listaAngajati.get(i).getNrCamioaneInCoada()==0){
+                    indice=i;
+                    listaAngajati.get(indice).getCoadaMasini().add(masina.getId());
+                    listaAngajati.get(indice).setNrCamioaneInCoada(1);
+                    break;
+                }
+            }
+        }
+        // altfel, va trebui sa introduca id-ul angajatului
+        else{
+            System.out.println("Introduceti id-ul angajatului care doriti sa va ajute: ");
+            int id = scanner.nextInt();
+            int indice = -1;
+            for (int i=0; i<listaAngajati.size(); i++){
+                if (id == listaAngajati.get(i).getId()){
+                    indice = i;
+                }
+            }
+            while (indice==-1){
+                System.out.println("Id-ul introdus nu corespunde niciunui angajat. Introduceti alt id: ");
+                id = scanner.nextInt();
+                for (int i=0; i<listaAngajati.size(); i++){
+                    if (id == listaAngajati.get(i).getId()){
+                        indice = i;
+                        // incrementam numarul de solicitari al acestui angajat
+                        listaAngajati.get(indice).setSolicitareSpeciala(listaAngajati.get(indice).getSolicitareSpeciala()+1);
+                    }
+                }
+            }
+            // daca poate fi atribuit angajatului dorit
+            if (listaAngajati.get(indice).getNrCamioaneInCoada() == 0){
+                listaAngajati.get(indice).getCoadaMasini().add(masina.getId());
+                listaAngajati.get(indice).setNrCamioaneInCoada(1);
+            }
+            // altfel il intrebam daca doreste sa fie repartizat altui angajat sau sa plece
+            else{
+                System.out.println("Angajatul selectat este prea ocupat. Alegeti 1 pentru redistribuire la alt angajat sau 2 pentru a pleca: ");
+                int optiune = scanner.nextInt();
+                while (optiune!=1 && optiune!=2){
+                    System.out.println("Alegere incorecta. Alegeti 1 pentru redistribuire la alt angajat sau 2 pentru a pleca: ");
+                    optiune = scanner.nextInt();
+                }
+                if (optiune == 1){
+                    int idx = -1;
+                    for (int i=0; i<listaAngajati.size(); i++){
+                        if (listaAngajati.get(i).getNrCamioaneInCoada() == 0){
+                            listaAngajati.get(i).getCoadaMasini().add(masina.getId());
+                            listaAngajati.get(i).setNrCamioaneInCoada(1);
+                            idx = i;
+                            break;
+                        }
+                    }
+                    if (idx == -1){
+                        System.out.println("Toti angajatii sunt ocupati. Doriti sa ramaneti in coada de asteptare? 1 pentru Da, 2 pentru Nu.");
+                        System.out.println("Coada de asteptare are acum masinile: " + coadaMasini);
+                        int raspuns = scanner.nextInt();
+                        while (raspuns!=1 && raspuns!=2){
+                            System.out.println("Alegere incorecta. Alegeti 1 pentru a fi adaugat in coada sau 2 pentru a pleca: ");
+                            raspuns = scanner.nextInt();
+                        }
+                        // il adaugam in coada de asteptare
+                        if (raspuns == 1){
+                            coadaMasini.add(masina);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
 }

@@ -4,33 +4,24 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 public abstract class Masina {
-    private static int contorAngajati;
+    private static int contorMasini;
     private int id;
     int nrkm;
     int anFabricatie;
+    int timpReparatie;
     boolean diesel;
+    int status;
 
-    public Masina(int id, int nrkm, int anFabricatie, boolean diesel) {
-        Masina.contorAngajati++;
-        this.id = id;
+    public Masina(int nrkm, int anFabricatie, boolean diesel) {
+        Masina.contorMasini++;
+        this.id = Masina.contorMasini;
         this.nrkm = nrkm;
         this.anFabricatie = anFabricatie;
         this.diesel = diesel;
+        status=-1;
     }
 
-    public int polita(){
-        Calendar ziCurenta = new GregorianCalendar();
-        int total = 0;
-
-        total += 100*(ziCurenta.get(Calendar.YEAR)-this.getAnFabricatie());
-        if (this.isDiesel()){
-            total+=500;
-        }
-        if (this.getNrkm() >= 200000){
-            total+=500;
-        }
-        return total;
-    }
+    public abstract int polita();
 
     public int politaDiscout(){
         return this.polita()/100*95;
@@ -52,5 +43,19 @@ public abstract class Masina {
         return diesel;
     }
 
+    public int getTimpReparatie() {
+        return timpReparatie;
+    }
 
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public void setTimpReparatie(int timpReparatie) {
+        this.timpReparatie = timpReparatie;
+    }
 }
