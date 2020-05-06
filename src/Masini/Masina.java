@@ -8,9 +8,9 @@ public abstract class Masina {
     private int id;
     int nrkm;
     int anFabricatie;
-    int timpReparatie;
+    int timpReparatie; //timpul de reparatie primit cand face cererea de reparare
     boolean diesel;
-    int status;
+    int status; //-1 pentru nu se afla in coada, 1 altfel
 
     public Masina(int nrkm, int anFabricatie, boolean diesel) {
         Masina.contorMasini++;
@@ -21,12 +21,13 @@ public abstract class Masina {
         status=-1;
     }
 
+    //metoda abstracta de calcul al politei
     public abstract int polita();
 
-    public int politaDiscout(){
-        return this.polita()/100*95;
-    }
+    //metoda abstracta de calcul a politei cu discount
+    public abstract int politaDiscout();
 
+    //getteri
     public int getId() {
         return id;
     }
@@ -51,6 +52,7 @@ public abstract class Masina {
         return status;
     }
 
+    //setteri
     public void setStatus(int status) {
         this.status = status;
     }

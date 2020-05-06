@@ -12,22 +12,25 @@ import Masini.Standard;
 import java.util.*;
 
 public class Serviciu {
+    //clasa ce contine solicitarile facute de un utilizator
 
     public void afisareAngajati(List<Angajat> listaAngajati){
+        //parcurgem lista de angajati si il afisam pe fiecare
         for (int i=0; i<listaAngajati.size(); i++){
             System.out.println(listaAngajati.get(i));
         }
     }
 
     public void adaugareAngajat(List<Angajat> listaAngajati){
+        //setam ziua curenta
         Calendar ziCurenta = new GregorianCalendar();
 
         Scanner scanner = new Scanner(System.in);
 
-
         System.out.println("Introduceti functia angajatului (1 pentru Director, 2 pentru Mecanic, 3 pentru Asistent: ");
         int functie = scanner.nextInt();
         scanner.nextLine();
+        //verificam ca valoarea introdusa sa fie 1,2 sau 3
         while (true){
             if (functie == 1 || functie == 3 || functie == 3){
                 break;
@@ -69,6 +72,7 @@ public class Serviciu {
         int lunaNastere = scanner.nextInt();
         System.out.println("Introduceti ziua nasterii angajatului: ");
         int ziuaNastere = scanner.nextInt();
+        //testam cazurile in care angajatul introdus ar avea 18 ani, iar pentru restul spunem sa introduca alta data
         while(true){
 
             if (anNastere < ziCurenta.get(Calendar.YEAR) - 18 ||
@@ -96,7 +100,7 @@ public class Serviciu {
         System.out.println("Introduceti ziua angajarii angajatului: ");
         int ziuaAngajare = scanner.nextInt();
         while(true){
-
+            //verificam situatiile in care este introdusa o data din viitor
             if (anAngajare > ziCurenta.get(Calendar.YEAR) ||
                (anAngajare == ziCurenta.get(Calendar.YEAR) &&
                 lunaAngajare > ziCurenta.get(Calendar.MONTH)) ||
@@ -116,7 +120,7 @@ public class Serviciu {
             }
         }
         Calendar dataAngajarii = new GregorianCalendar(anAngajare,lunaAngajare,ziuaAngajare);
-
+        //in functie de tip, cream un obiect corespunzator
         if (functie == 1){
             Director director = new Director(nume,prenume,dataNasterii,dataAngajarii);
             listaAngajati.add(director);
@@ -144,6 +148,7 @@ public class Serviciu {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Introduceti ID-ul angajatului ce va fi editat (introduceti 0 pentru inapoi):");
         int id = scanner.nextInt();
+        scanner.nextLine();
         if (id == 0){
             return;
         }
@@ -158,6 +163,7 @@ public class Serviciu {
         while (indiceAngajatDeEditat == -1){
             System.out.println("Id-ul introdus nu corespunde niciunui angajat. Introduceti alt id:");
             id = scanner.nextInt();
+            scanner.nextLine();
             for (int i=0; i<listaAngajati.size(); i++){
                 if (listaAngajati.get(i).getId()==id){
                     indiceAngajatDeEditat=i;
@@ -176,10 +182,12 @@ public class Serviciu {
         System.out.println("5.Data angajarii;\n");
         System.out.println("6.Inapoi.\n");
         int numarCamp = scanner.nextInt();
+        scanner.nextLine();
 
         if (numarCamp == 1){
             System.out.println("Introduceti noua functie:\n");
             int nouaFunctie = scanner.nextInt();
+            //crearea unui noi obiect si stergerea celui vechi din lista
             if (nouaFunctie==1){
                 Director director = new Director(angajatDeEditat.getNume(),angajatDeEditat.getPrenume(),
                                                  angajatDeEditat.getDataNasterii(),angajatDeEditat.getDataAngajarii());
@@ -197,6 +205,8 @@ public class Serviciu {
             }
             listaAngajati.remove(indiceAngajatDeEditat);
         }
+
+        //pentru urmatoarele campuri testam exceptii ca la adaugareAngajat
         if (numarCamp == 2){
             System.out.println("Introduceti numele angajatului: ");
             String nume = scanner.nextLine();
@@ -232,7 +242,6 @@ public class Serviciu {
             System.out.println("Introduceti ziua nasterii angajatului: ");
             int ziuaNastere = scanner.nextInt();
             while(true){
-
                 if (anNastere < ziCurenta.get(Calendar.YEAR) - 18 ||
                         (anNastere == ziCurenta.get(Calendar.YEAR) - 18 &&
                                 lunaNastere <= ziCurenta.get(Calendar.MONTH) &&
@@ -261,7 +270,6 @@ public class Serviciu {
             System.out.println("Introduceti ziua angajarii angajatului: ");
             int ziuaAngajare = scanner.nextInt();
             while(true){
-
                 if (anAngajare > ziCurenta.get(Calendar.YEAR) ||
                         (anAngajare == ziCurenta.get(Calendar.YEAR) &&
                                 lunaAngajare > ziCurenta.get(Calendar.MONTH)) ||
@@ -354,6 +362,7 @@ public class Serviciu {
                             break;
                         }
                     }
+                    //in cazul in care toti angajatii sunt ocupati, il intrebam daca doreste sa fie adaugat in coada de asteptare
                     if (idx == -1){
                         System.out.println("Toti angajatii sunt ocupati. Doriti sa ramaneti in coada de asteptare? 1 pentru Da, 2 pentru Nu.");
                         System.out.println("Coada de asteptare are acum masinile: " + coadaMasini);
@@ -545,16 +554,22 @@ public class Serviciu {
         // daca ajunge la 0, o eliminam din coada fiecarui angajat si daca exista masini in coada de asteptare, o
         // vom lua pe prima si o atribuim angajatului curent
         for (int i=0; i<listaAngajati.size(); i++){
+
             Angajat angajatCurent = listaAngajati.get(i);
             // daca angajatul curent are masini in coada de reparare
             if (!angajatCurent.getCoadaMasini().isEmpty()){
+
                 int idMasinaCurenta = angajatCurent.getCoadaMasini().peek();
                 Masina masinaCurenta;
+
                 for (int j=0; j<=listaMasini.size(); j++){
+
                     if (listaMasini.get(j).getId()==idMasinaCurenta){
+
                         masinaCurenta = listaMasini.get(j);
                         // daca mai are o singura unitate ramasa, o eliminam din coada si actualizam statusurile angajatului
                         if (masinaCurenta.getTimpReparatie() == 1){
+
                             masinaCurenta.setTimpReparatie(0);
                             angajatCurent.getCoadaMasini().poll();
                             if (masinaCurenta instanceof Standard){

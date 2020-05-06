@@ -12,6 +12,12 @@ import java.util.Calendar;
 import java.util.List;
 
 public class ScriitorAngajati {
+    //scriitor pentru angajati care va pune datele intr-un fisier de tip CSV
+    //fiecare linie ca corespunde unui angajat
+    //vom crea un nou fisier angajat_tmp.csv in care vom scrie noile date
+    //apoi vom sterge fisierul vechi angajat.csv
+    //pentru ca in final sa redenumim fisierul angajat_tmp.csv in angajat.csv
+
     private static String BASE_PATH;
     private static ScriitorAngajati single_instance = null;
 

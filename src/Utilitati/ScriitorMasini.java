@@ -15,6 +15,13 @@ import java.io.IOException;
 import java.util.List;
 
 public class ScriitorMasini {
+    //scriitor pentru masini care va pune datele intr-un fisier de tip CSV
+    //fiecare linie ca corespunde unei masini
+    //vom crea un nou fisier masini_tmp.csv in care vom scrie noile date
+    //apoi vom sterge fisierul vechi masini.csv
+    //pentru ca in final sa redenumim fisierul masini_tmp.csv in masini.csv
+
+
     private static String BASE_PATH;
     private static ScriitorMasini single_instance = null;
 

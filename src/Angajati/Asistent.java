@@ -5,6 +5,7 @@ import java.util.GregorianCalendar;
 
 public class Asistent extends Angajat{
 
+    //constructor ce apeleaza si constructoru clasei Angajat
     public Asistent(String nume, String prenume, Calendar dataNasterii, Calendar dataAngajarii) {
         super(nume, prenume, dataNasterii, dataAngajarii);
         this.coeficientSalariat = 1;
@@ -36,6 +37,7 @@ public class Asistent extends Angajat{
                 '}';
     }
 
+    //suprascrierea metodei abstracte calculSalariu() din Angajat folosind formula potrivita
     @Override
     public double calculSalariu() {
         Calendar ziCurenta = new GregorianCalendar();

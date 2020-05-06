@@ -14,15 +14,15 @@ public abstract class Angajat {
     private Calendar dataNasterii;
     private Calendar dataAngajarii;
     private Queue<Integer> coadaMasini; //coada de masini (contine id-urile acestora)
-    private int nrStandardInCoada;
-    private int nrAutobuzeInCoada;
-    private int nrCamioaneInCoada;
-    private int nrMasiniReparate;
+    private int nrStandardInCoada; //numarul de masini standard pe care urmeaza sa le repare (maxim 3)
+    private int nrAutobuzeInCoada; //maxim 1
+    private int nrCamioaneInCoada; //maxim 1
+    private int nrMasiniReparate; //numarul de masini reparate de cand lucreaza la acest service
     private int nrAutobuzeNoi;
-    private int sumaPolite;
-    private int solicitareSpeciala;
-    private int bacsis;
-    protected double coeficientSalariat;
+    private int sumaPolite; //suma politelor tuturor masinilor reparate
+    private int solicitareSpeciala; //numarul de clienti care au solicitat expres sa fie ajutati de acest angajat
+    private int bacsis; //suma bacsisului de-a lungul timpului
+    protected double coeficientSalariat; //valoare prestabilita pentru Director, Mecanic si Asistent
 
     public Angajat(String nume, String prenume, Calendar dataNasterii, Calendar dataAngajarii) {
         this.nume = nume;
@@ -34,6 +34,7 @@ public abstract class Angajat {
         coadaMasini = new LinkedList<>();
     }
 
+    //metoda abstracta ce va fi implementata in clasele ce mostenesc Angajat
     public abstract double calculSalariu();
 
     //setteri

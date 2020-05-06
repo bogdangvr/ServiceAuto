@@ -21,13 +21,13 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
 
-
         Serviciu serviciulMeu = new Serviciu();
 
         Cititor cititor = Cititor.getInstance();
 
         Scanner scanner = new Scanner(System.in);
 
+        //citirea datelor din fisierele CSV
         String[][] continutFisierMasini = cititor.citeste("masini.csv");
         String[][] continutFisierAngajati = cititor.citeste("angajati.csv");
         List<Masina> listaMasini = new ArrayList<>();
@@ -191,6 +191,8 @@ public class Main {
             System.out.println("2. Operatii client;");
             System.out.println("3. Exit.");
             int tastaInitiala = scanner.nextInt();
+
+            //verificare ca inputul sa corespunda unei optiuni
             while (tastaInitiala<1 || tastaInitiala>3){
                 System.out.println("Trebuie sa alegeti fie 1,2 sau 3!");
                 System.out.println("Alegeti o tasta:");
@@ -199,7 +201,7 @@ public class Main {
                 System.out.println("3. Exit.");
                 tastaInitiala = scanner.nextInt();
             }
-
+            //tratam fiecare caz in parte si apelam serviciul corespunzator
             if (tastaInitiala==1){
                 while (true){
                     System.out.println("Alegeti o tasta:");

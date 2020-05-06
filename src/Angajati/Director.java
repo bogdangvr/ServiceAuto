@@ -36,6 +36,7 @@ public class Director extends Angajat {
                 '}';
     }
 
+    //suprascrierea metodei abstracte calculSalariu() din Angajat folosind formula potrivita
     @Override
     public double calculSalariu() {
         Calendar ziCurenta = new GregorianCalendar();

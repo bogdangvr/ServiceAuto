@@ -4,13 +4,14 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 public class Camion extends Masina {
-    int tonaj; //va fi exprimat in kg
+    int tonaj; //camp specific clasei Camion
 
     public Camion(int nrkm, int anFabricatie, boolean diesel, int tonaj) {
         super(nrkm, anFabricatie, diesel);
         this.tonaj = tonaj;
     }
 
+    //suprascriere de metode abstracte
     @Override
     public int polita(){
         Calendar ziCurenta = new GregorianCalendar();
@@ -23,10 +24,12 @@ public class Camion extends Masina {
         return total;
     }
 
+    @Override
     public int politaDiscout(){
         return this.polita()/100*85;
     }
 
+    //getter
     public int getTonaj() {
         return tonaj;
     }

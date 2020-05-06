@@ -4,13 +4,14 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 public class Autobuz extends Masina {
-    int numarLocuri;
+    int numarLocuri; //camp specific clasei Autobuz
 
     public Autobuz(int nrkm, int anFabricatie, boolean diesel, int numarLocuri) {
         super(nrkm, anFabricatie, diesel);
         this.numarLocuri = numarLocuri;
     }
 
+    //suprascriere de metode abstracte
     @Override
     public int polita(){
         Calendar ziCurenta = new GregorianCalendar();
@@ -31,10 +32,12 @@ public class Autobuz extends Masina {
         return total;
     }
 
+    @Override
     public int politaDiscout(){
         return this.polita()/100*90;
     }
 
+    //getter
     public int getNumarLocuri() {
         return numarLocuri;
     }
