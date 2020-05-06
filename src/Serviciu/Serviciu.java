@@ -32,7 +32,7 @@ public class Serviciu {
         scanner.nextLine();
         //verificam ca valoarea introdusa sa fie 1,2 sau 3
         while (true){
-            if (functie == 1 || functie == 3 || functie == 3){
+            if (functie == 1 || functie == 2 || functie == 3){
                 break;
             }
             else{
